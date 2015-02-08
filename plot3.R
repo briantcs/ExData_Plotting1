@@ -11,11 +11,14 @@ library(ggplot2)
 data <- read.csv.sql("household_power_consumption.txt",header=TRUE,sep=";",
                      sql="Select * from file where Date = '1/2/2007' OR Date = '2/2/2007'")
 
-## plot 1
+## plot 3
 
-with(data,hist(data$Global_active_power,main="Global Active Power", xlab="Global Active Power (kilowatts)",col="red"))
+with(data,plot(date_time,Sub_metering_1,type='l',xlab="",ylab="Energy sub metering"))
 
-dev.copy(png,file="plot1.png")
+with(data,lines(date_time,Sub_metering_2))
+
+with(data,lines(date_time,Sub_metering_3))
+
+dev.copy(png,file="plot3.png")
 
 dev.off()
-

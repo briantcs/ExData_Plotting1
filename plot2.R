@@ -1,31 +1,22 @@
-origin_data <- read.table("household_power_consumption.txt", 
-                        sep=";",
-                        header=TRUE,
-                        quote= "",
-                        strip.white=TRUE,
-                        stringsAsFactors = FALSE,
-                        na.strings= "?")
+## load sql for sql query
 
-data <- subset(origin_data, (origin_data$Date == "1/2/2007" | origin_data$Date== "2/2/2007")) 
+library(sqldf)
 
+## load ggplot2
 
-data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
-data$DateTime <- as.POSIXct(paste(data$Date,data$Time))
+library(ggplot2)
 
-# Constructing the plot and saving it to a PNG file with a width of 480 pixels and a height of 480 pixels.
+## reading relavent data
 
-# Opening the PNG graphic device
-png(filename="plot2.png",
-    width=480, height=480,
-    units="px",
-    bg = "transparent")
+data <- read.csv.sql("household_power_consumption.txt",header=TRUE,sep=";",
+                     sql="Select * from file where Date = '1/2/2007' OR Date = '2/2/2007'")
 
-# creating a plot using base plotting system 
-plot(data$DateTime,
-     data$Global_active_power,
-     type = "l", 
-     lwd=1,
-     xlab = "",  ylab = "Global Active Power (kilowatts)")
+## plot 2
 
-# Closing the PNG device
+date_time<-as.POSIXct(paste(data$Date, data$Time), format = "%d/%m/%Y %T")
+
+with(data,plot(date_time,data$Global_active_power,type='l',main="",xlab="",ylab="Global Active Power (kilowatts)"))
+
+dev.copy(png,file="plot2.png")
+
 dev.off()
